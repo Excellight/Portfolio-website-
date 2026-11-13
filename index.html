@@ -1,70 +1,163 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#050711" />
-  <meta name="description" content="Explore the universe of Excellence Odimegwu — AI, cybersecurity, product design and software projects." />
-  <title>Excellence Odimegwu — A Universe of Ideas</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#050711">
+  <meta name="description" content="Explore Litex, the interactive 3D portfolio of Excellence Odimegwu.">
+  <title>Litex — Excellence Odimegwu</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
   <script type="importmap">
-    {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+      }
+    }
   </script>
-  <script type="module" src="app.js"></script>
 </head>
+
 <body>
-  <canvas id="universe" aria-label="Interactive 3D starfield"></canvas>
-  <div class="vignette"></div>
-  <header class="topbar">
-    <a class="brand" href="#home" aria-label="Litex home"><span class="brand-mark">✦</span><span>LITEX<span class="brand-dot">.</span></span></a>
-    <div class="top-note"><span class="live-dot"></span> AN INTERACTIVE PORTFOLIO</div>
-    <button class="sound-toggle" id="motionToggle" type="button" aria-pressed="false">◌ <span>Reduce motion</span></button>
+
+  <!-- 3D Universe -->
+  <canvas id="universe"></canvas>
+
+  <!-- Intro Screen -->
+  <section id="intro">
+    <div class="intro-content">
+      <p class="eyebrow">WELCOME TO LITEX</p>
+      <h1>Every star tells a story.<br>
+        <span>Every world holds an idea.</span>
+      </h1>
+      <p class="intro-subtitle">
+        An interactive universe of creativity, technology and ideas.
+      </p>
+      <button id="exploreBtn" class="primary-btn">
+        Explore the Universe <span>↗</span>
+      </button>
+    </div>
+    <div class="intro-footer">LITEX · EXCELLENCE ODIMEGWU</div>
+  </section>
+
+  <!-- Main Navigation / HUD -->
+  <header class="hud">
+    <a href="#" class="brand" aria-label="Litex home">LITEX<span>.</span></a>
+
+    <nav class="main-nav">
+      <a href="#legend">Explore</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <div class="hud-status" id="hudStatus">
+      DEEP SPACE // WAITING
+    </div>
   </header>
 
-  <main id="home">
-    <section class="intro" id="intro">
-      <p class="eyebrow">A PERSONAL UNIVERSE BY EXCELLENCE ODIMEGWU</p>
-      <h1>Every star tells<br><em>a story.</em></h1>
-      <p class="intro-sub">Every world holds an idea.</p>
-      <button class="explore-btn" id="exploreBtn" type="button"><span>Explore the universe</span><b>↗</b></button>
-      <p class="scroll-hint">MOVE YOUR CURSOR · FIND A STAR · BEGIN EXPLORING</p>
-    </section>
+  <!-- World Guide -->
+  <aside id="legend">
+    <p class="eyebrow">YOUR DESTINATIONS</p>
+    <p>Select a glowing world to explore.</p>
+    <span>01 — THE GROWING WORLD</span>
+    <span>02 — THE MECH LAB</span>
+    <span>03 — THE CYBER REALM</span>
+    <span>04 — THE CREATIVE ORBIT</span>
+    <span>05 — THE ORIGIN</span>
+  </aside>
 
-    <section class="hud" aria-label="Universe navigation">
-      <div class="hud-label"><span class="live-dot"></span><span id="hudStatus">UNIVERSE // ENTRY POINT</span></div>
-      <div class="hud-help">Select a glowing world to discover a project</div>
-    </section>
+  <!-- World Information Panel -->
+  <section id="worldCard" aria-hidden="true">
+    <button id="closeCard" aria-label="Close world details">×</button>
+    <p id="worldType" class="eyebrow">WORLD</p>
+    <h2 id="worldTitle">Destination</h2>
+    <p id="worldDescription"></p>
+    <div id="worldMeta"></div>
+    <a id="worldLink" href="#" target="_blank" rel="noopener noreferrer" hidden>
+      Explore project ↗
+    </a>
+  </section>
 
-    <section class="world-card" id="worldCard" aria-live="polite" aria-hidden="true">
-      <button class="close-card" id="closeCard" aria-label="Close project panel">×</button>
-      <p class="eyebrow" id="worldType">WORLD 01 / PROJECT</p>
-      <h2 id="worldTitle">A world of ideas</h2>
-      <p class="world-description" id="worldDescription"></p>
-      <div class="world-meta" id="worldMeta"></div>
-      <a class="world-link" id="worldLink" href="#" target="_blank" rel="noreferrer" hidden>Explore project <span>↗</span></a>
-      <p class="panel-foot">DISCOVERED IN EXCELLENCE'S UNIVERSE</p>
-    </section>
+  <!-- Motion Accessibility -->
+  <button id="motionToggle" aria-pressed="false">
+    ◌ <span>Reduce motion</span>
+  </button>
 
-    <section class="legend" id="legend">
-      <span class="legend-line"></span><span>PROJECT WORLDS</span>
-      <span class="legend-count">05 DESTINATIONS</span>
-    </section>
+  <!-- Contact Section -->
+  <section id="contact" class="contact-section">
+    <p class="eyebrow">LET'S CONNECT</p>
+    <h2>Every great idea starts with a connection.</h2>
+    <p>
+      Interested in collaborating, discussing an idea or working together?
+      I'd love to hear from you.
+    </p>
 
-    <button class="litex-launch" id="litexLaunch" type="button"><span class="litex-orb">✦</span><span><b>Ask Litex</b><small>Your guide to this universe</small></span><span class="launch-arrow">↗</span></button>
+    <div class="contact-links">
+      <!-- Replace the href values with your actual contact details -->
+      <a href="mailto: excellence.odimegwu@gmail.com">Email ↗</a>
 
-    <section class="chat-panel" id="chatPanel" aria-hidden="true">
-      <div class="chat-head"><div><span class="litex-orb small">✦</span><span><b>Litex</b><small>Portfolio guide · Knowledge preview</small></span></div><button id="chatClose" aria-label="Close Litex">×</button></div>
-      <div class="chat-messages" id="chatMessages"><div class="bubble bot">Hello! I'm Litex, your guide. Ask me about Excellence, his projects, skills or vision.</div></div>
-      <div class="quick-questions"><button data-question="Who is Excellence?">Who is Excellence?</button><button data-question="Tell me about AI Mech Lab">AI Mech Lab</button><button data-question="What is the Student Management System?">Student system</button></div>
-      <form id="chatForm"><input id="chatInput" autocomplete="off" placeholder="Ask me something…" aria-label="Ask Litex a question"><button aria-label="Send message">↑</button></form>
-      <p class="chat-disclaimer">Litex is an early knowledge-based preview, not a live AI connection yet.</p>
-    </section>
+      <a href="https://www.linkedin.com/in/excellence-udochukwu-odimegwu-8ab9153a2"
+         target="_blank" rel="noopener noreferrer">
+        LinkedIn ↗
+      </a>
 
-    <footer class="footer"><span>© 2026 EXCELLENCE ODIMEGWU</span><span>BUILT TO EXPLORE · BUILT TO CREATE</span></footer>
-  </main>
-  <noscript>This interactive portfolio needs JavaScript enabled. You can still explore the project information once JavaScript is enabled.</noscript>
+      <a href="https://github.com/Excellight"
+         target="_blank" rel="noopener noreferrer">
+        GitHub ↗
+      </a>
+    </div>
+
+    <p class="contact-signature">EXCELLENCE ODIMEGWU · LITEX</p>
+  </section>
+
+  <!-- Litex Assistant -->
+  <button id="litexLaunch" aria-label="Open Litex assistant">
+    Ask Litex ✦
+  </button>
+
+  <section id="chatPanel" aria-hidden="true">
+    <div class="chat-header">
+      <div>
+        <p class="eyebrow">LITEX INTELLIGENCE</p>
+        <h3>Explore with Litex</h3>
+      </div>
+      <button id="chatClose" aria-label="Close assistant">×</button>
+    </div>
+
+    <div id="chatMessages">
+      <div class="bubble bot">
+        Hello! I'm Litex. Ask me about Excellence, his projects,
+        interests or technical skills.
+      </div>
+    </div>
+
+    <div class="suggested-questions">
+      <button data-question="Who is Excellence?">Who is Excellence?</button>
+      <button data-question="Tell me about AI Mech Lab">AI Mech Lab</button>
+      <button data-question="What are his skills?">His skills</button>
+    </div>
+
+    <form id="chatForm">
+      <input
+        id="chatInput"
+        type="text"
+        placeholder="Ask me something..."
+        autocomplete="off"
+        required
+      >
+      <button type="submit" aria-label="Send message">➤</button>
+    </form>
+  </section>
+
+  <footer class="site-footer">
+    <span>© 2026 EXCELLENCE ODIMEGWU</span>
+    <span>EVERY STAR TELLS A STORY.</span>
+  </footer>
+
+  <script type="module" src="app.js"></script>
 </body>
-    </html>
+</html>
