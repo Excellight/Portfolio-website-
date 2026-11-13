@@ -1,35 +1,46 @@
-# Litex — Excellence's Interactive Universe
+Litex — Excellence Odimegwu's Interactive Portfolio
 
-A static, immersive 3D portfolio starter built with Three.js and vanilla JavaScript. It is designed for GitHub Pages.
+Litex is an immersive 3D portfolio designed to present my work, projects, skills, and creative interests through an interactive universe.
 
-## Run locally
+Rather than using a traditional portfolio layout, Litex explores a different way of telling my professional story. Each world represents an idea, an area of interest, or a project.
 
-Because this project uses JavaScript modules, open it through a local web server rather than double-clicking `index.html`.
+About the Project
 
-With Python installed:
+Litex brings together my interests in:
 
-```bash
-python -m http.server 8000
-```
+- Artificial Intelligence
+- Cybersecurity
+- Product Design
+- Web Development
+- Creative Technology
 
-Then visit `http://localhost:8000`.
+The experience is built with Three.js, vanilla JavaScript, HTML, and CSS.
 
-## Publish with GitHub Pages
+Features
 
-1. Create a GitHub repository named `excellence-portfolio`.
-2. Upload `index.html`, `style.css`, `app.js`, and `README.md` to the repository root.
-3. Open **Settings → Pages**.
-4. Under **Build and deployment**, choose **Deploy from a branch**.
-5. Select branch `main` and folder `/ (root)`, then save.
-6. Wait for GitHub Pages to publish the site.
+- Interactive 3D universe and animated starfield
+- Immersive project environments
+- Interactive navigation between different worlds
+- Project information panels
+- Litex assistant prototype
 
-## Before sharing publicly
+Technologies
 
-- Add your professional email and LinkedIn URL.
-- Add verified repository/demo links to the project destinations in `app.js` (the `link` values in the `worlds` array).
-- Review all project descriptions and update any details that have changed.
-- Litex is currently a local FAQ prototype with curated answers. It is not connected to Gemini or another live AI model. Never put a private API key in `app.js` or any frontend file. A real AI connection needs a secure backend.
+- HTML
+- CSS
+- JavaScript
+- Three.js
 
-## Notes
+Live Portfolio
 
-Three.js is loaded from jsDelivr and Google Fonts are loaded from Google Fonts, so those visual assets require an internet connection. The site itself is static and can be hosted on GitHub Pages.
+[Portfolio link coming soon]
+
+Connect With Me
+
+- Email: excellence.odimegwu@gmail.com 
+- LinkedIn: https://www.linkedin.com/in/excellence-udochukwu-odimegwu-8ab9153a2
+- GitHub: https://github.com/Excellight
+
+---
+
+Every star tells a story. Every world holds an idea.
