@@ -4,160 +4,680 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#050711">
-  <meta name="description" content="Explore Litex, the interactive 3D portfolio of Excellence Odimegwu.">
-  <title>Litex — Excellence Odimegwu</title>
+  <meta name="theme-color" content="#edf5f8">
+  <meta name="description" content="Explore the portfolio of Excellence Odimegwu — AI engineering, cybersecurity, product design and web development.">
+  <meta name="author" content="Excellence Odimegwu">
+
+  <title>Litex | Excellence Odimegwu</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
-
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
-      }
-    }
-  </script>
+  <script src="app.js" defer></script>
 </head>
 
 <body>
 
-  <!-- 3D Universe -->
-  <canvas id="universe"></canvas>
+  <!-- LOADING SCREEN -->
+  <div class="loader" id="loader" aria-label="Loading Litex">
+    <div class="loader-content">
+      <span class="loader-logo">LITEX<span>.</span></span>
+      <p>Preparing your experience...</p>
+      <div class="loader-line"><span></span></div>
+    </div>
+  </div>
 
-  <!-- Intro Screen -->
-  <section id="intro">
-    <div class="intro-content">
-      <p class="eyebrow">WELCOME TO LITEX</p>
-      <h1>Every star tells a story.<br>
-        <span>Every world holds an idea.</span>
-      </h1>
-      <p class="intro-subtitle">
-        An interactive universe of creativity, technology and ideas.
-      </p>
-      <button id="exploreBtn" class="primary-btn">
-        Explore the Universe <span>↗</span>
+  <!-- ACCESSIBILITY -->
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- NAVIGATION -->
+  <header class="site-header" id="top">
+    <nav class="navigation container" aria-label="Main navigation">
+
+      <a class="brand" href="#home" aria-label="Litex home">
+        LITEX<span>.</span>
+      </a>
+
+      <button class="menu-toggle" id="menu-toggle"
+        aria-label="Open navigation menu"
+        aria-expanded="false"
+        aria-controls="nav-links">
+        <span></span>
+        <span></span>
       </button>
-    </div>
-    <div class="intro-footer">LITEX · EXCELLENCE ODIMEGWU</div>
-  </section>
 
-  <!-- Main Navigation / HUD -->
-  <header class="hud">
-    <a href="#" class="brand" aria-label="Litex home">LITEX<span>.</span></a>
+      <div class="nav-links" id="nav-links">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#skills">Skills</a>
+        <a href="#education">Education</a>
+        <a href="#contact" class="nav-contact">Let's connect <span>↗</span></a>
+      </div>
 
-    <nav class="main-nav">
-      <a href="#legend">Explore</a>
-      <a href="#contact">Contact</a>
     </nav>
-
-    <div class="hud-status" id="hudStatus">
-      DEEP SPACE // WAITING
-    </div>
   </header>
 
-  <!-- World Guide -->
-  <aside id="legend">
-    <p class="eyebrow">YOUR DESTINATIONS</p>
-    <p>Select a glowing world to explore.</p>
-    <span>01 — THE GROWING WORLD</span>
-    <span>02 — THE MECH LAB</span>
-    <span>03 — THE CYBER REALM</span>
-    <span>04 — THE CREATIVE ORBIT</span>
-    <span>05 — THE ORIGIN</span>
-  </aside>
+  <main id="main">
 
-  <!-- World Information Panel -->
-  <section id="worldCard" aria-hidden="true">
-    <button id="closeCard" aria-label="Close world details">×</button>
-    <p id="worldType" class="eyebrow">WORLD</p>
-    <h2 id="worldTitle">Destination</h2>
-    <p id="worldDescription"></p>
-    <div id="worldMeta"></div>
-    <a id="worldLink" href="#" target="_blank" rel="noopener noreferrer" hidden>
-      Explore project ↗
-    </a>
-  </section>
+    <!-- HERO / LANDING EXPERIENCE -->
+    <section class="hero section" id="home">
 
-  <!-- Motion Accessibility -->
-  <button id="motionToggle" aria-pressed="false">
-    ◌ <span>Reduce motion</span>
-  </button>
+      <div class="hero-atmosphere" aria-hidden="true">
+        <div class="hero-cloud cloud-one"></div>
+        <div class="hero-cloud cloud-two"></div>
+        <div class="hero-cloud cloud-three"></div>
+        <div class="hero-glow"></div>
+      </div>
 
-  <!-- Contact Section -->
-  <section id="contact" class="contact-section">
-    <p class="eyebrow">LET'S CONNECT</p>
-    <h2>Every great idea starts with a connection.</h2>
-    <p>
-      Interested in collaborating, discussing an idea or working together?
-      I'd love to hear from you.
-    </p>
+      <div class="hero-content container">
 
-    <div class="contact-links">
-      <!-- Replace the href values with your actual contact details -->
-      <a href="mailto: excellence.odimegwu@gmail.com">Email ↗</a>
+        <span class="eyebrow">
+          <span class="status-dot"></span>
+          WELCOME TO MY WORLD
+        </span>
 
-      <a href="https://www.linkedin.com/in/excellence-udochukwu-odimegwu-8ab9153a2"
-         target="_blank" rel="noopener noreferrer">
-        LinkedIn ↗
+        <h1>
+          Ideas become<br>
+          <span class="gradient-text">possibilities.</span>
+        </h1>
+
+        <p class="hero-description">
+          I'm Excellence Odimegwu — an aspiring AI engineer,
+          cybersecurity analyst and product designer exploring
+          the intersection of intelligent technology, creativity
+          and secure digital experiences.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#projects" class="button button-primary">
+            Explore my work <span>↗</span>
+          </a>
+          <a href="#about" class="button button-secondary">
+            Discover my story
+          </a>
+        </div>
+
+        <div class="hero-disciplines">
+          <span>AI Engineering</span>
+          <span>Cybersecurity</span>
+          <span>Product Design</span>
+          <span>Web Development</span>
+        </div>
+
+      </div>
+
+      <div class="hero-landscape" aria-hidden="true">
+        <div class="water-surface"></div>
+        <div class="floating-stone stone-one"></div>
+        <div class="floating-stone stone-two"></div>
+        <div class="floating-stone stone-three"></div>
+      </div>
+
+      <a href="#about" class="scroll-indicator">
+        <span>Scroll to explore</span>
+        <span class="scroll-arrow">↓</span>
       </a>
 
-      <a href="https://github.com/Excellight"
-         target="_blank" rel="noopener noreferrer">
-        GitHub ↗
-      </a>
-    </div>
+    </section>
 
-    <p class="contact-signature">EXCELLENCE ODIMEGWU · LITEX</p>
-  </section>
+    <!-- ABOUT -->
+    <section class="section about-section" id="about">
+      <div class="container">
 
-  <!-- Litex Assistant -->
-  <button id="litexLaunch" aria-label="Open Litex assistant">
-    Ask Litex ✦
-  </button>
+        <div class="section-heading">
+          <span class="eyebrow">01 — THE PERSON BEHIND THE IDEAS</span>
+          <h2>A little about <span>me.</span></h2>
+          <p>
+            Technology is more than writing code. It's about
+            understanding people, solving problems and creating
+            things that make a difference.
+          </p>
+        </div>
 
-  <section id="chatPanel" aria-hidden="true">
-    <div class="chat-header">
-      <div>
-        <p class="eyebrow">LITEX INTELLIGENCE</p>
-        <h3>Explore with Litex</h3>
+        <div class="about-grid">
+
+          <div class="about-main">
+            <span class="card-label">MY STORY</span>
+            <h3>Curiosity drives creation.</h3>
+
+            <p>
+              I'm a Computer Science student at the University of
+              Nigeria, Nsukka, building my journey across artificial
+              intelligence, cybersecurity, product design and web
+              development.
+            </p>
+
+            <p>
+              I enjoy exploring new ideas, learning how systems work
+              and turning concepts into useful digital experiences.
+              My interests bring together technical thinking,
+              creativity and problem-solving.
+            </p>
+
+            <p>
+              My goal is to contribute to technology that is
+              intelligent, accessible, secure and meaningful.
+            </p>
+          </div>
+
+          <div class="about-highlight">
+            <span class="card-label">MY APPROACH</span>
+            <div class="highlight-symbol" aria-hidden="true">✳</div>
+            <h3>Think deeply.<br>Create boldly.</h3>
+            <p>
+              Combining imagination with technical understanding
+              to explore what technology can become.
+            </p>
+          </div>
+
+        </div>
       </div>
-      <button id="chatClose" aria-label="Close assistant">×</button>
-    </div>
+    </section>
 
-    <div id="chatMessages">
-      <div class="bubble bot">
-        Hello! I'm Litex. Ask me about Excellence, his projects,
-        interests or technical skills.
+    <!-- EXPERIENCE -->
+    <section class="section experience-section" id="experience">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="eyebrow">02 — THE JOURNEY</span>
+          <h2>Experience & <span>growth.</span></h2>
+          <p>
+            A collection of experiences, collaborations and learning
+            opportunities shaping my professional journey.
+          </p>
+        </div>
+
+        <div class="timeline">
+
+          <article class="timeline-item">
+            <span class="timeline-marker"></span>
+            <div class="timeline-content">
+              <span class="card-label">PRODUCT DESIGN & FRONT-END DEVELOPMENT</span>
+              <h3>Integral Builder Explorers</h3>
+              <p class="timeline-meta">Professional project experience · 2026</p>
+              <p>
+                Contributed to product design and front-end development,
+                exploring how user needs can be translated into
+                functional digital interfaces.
+              </p>
+            </div>
+          </article>
+
+          <article class="timeline-item">
+            <span class="timeline-marker"></span>
+            <div class="timeline-content">
+              <span class="card-label">AI, CYBERSECURITY & CLOUD SECURITY</span>
+              <h3>Professional Training</h3>
+              <p class="timeline-meta">Paranomics Nigeria · 2026</p>
+              <p>
+                Completed training in cybersecurity and cloud security,
+                followed by artificial intelligence training.
+              </p>
+            </div>
+          </article>
+
+          <article class="timeline-item">
+            <span class="timeline-marker"></span>
+            <div class="timeline-content">
+              <span class="card-label">TECHNICAL COLLABORATION</span>
+              <h3>AI Mech Lab</h3>
+              <p class="timeline-meta">Collaborative technology project</p>
+              <p>
+                Contributing to database design and Gemini AI
+                adaptation and integration for an interactive
+                learning platform.
+              </p>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="section projects-section" id="projects">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="eyebrow">03 — IDEAS IN ACTION</span>
+          <h2>Selected <span>projects.</span></h2>
+          <p>
+            Not just things I've built, but problems I've explored,
+            ideas I've developed and possibilities I'm working towards.
+          </p>
+        </div>
+
+        <div class="project-grid">
+
+          <!-- STUDENT MANAGEMENT -->
+          <article class="project-card">
+            <div class="project-visual project-visual-student">
+              <span class="project-number">01</span>
+              <div class="prototype-preview">
+                <div class="preview-topbar">
+                  <span></span><span></span><span></span>
+                </div>
+                <div class="preview-dashboard">
+                  <div class="preview-sidebar"></div>
+                  <div class="preview-content">
+                    <div class="preview-heading"></div>
+                    <div class="preview-stats">
+                      <span></span><span></span><span></span>
+                    </div>
+                    <div class="preview-chart"></div>
+                  </div>
+                </div>
+              </div>
+              <span class="prototype-tag">INTERACTIVE PROTOTYPE</span>
+            </div>
+
+            <div class="project-info">
+              <span class="card-label">EDTECH · WEB DEVELOPMENT</span>
+              <h3>Student Management System</h3>
+              <p>
+                A student-focused management concept designed to
+                connect learning activities, academic progress
+                and administrative insights.
+              </p>
+              <div class="tag-list">
+                <span>Python</span>
+                <span>React</span>
+                <span>Dashboard Design</span>
+              </div>
+              <button class="text-link prototype-trigger"
+                data-prototype="student">
+                Explore prototype <span>↗</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- AI MECH LAB -->
+          <article class="project-card">
+            <div class="project-visual project-visual-mech">
+              <span class="project-number">02</span>
+              <div class="mech-orbit" aria-hidden="true">
+                <div class="orbit-ring"></div>
+                <div class="orbit-ring orbit-ring-two"></div>
+                <div class="orbit-core">AI</div>
+              </div>
+              <span class="prototype-tag">PROJECT EXPLORATION</span>
+            </div>
+
+            <div class="project-info">
+              <span class="card-label">AI · EDUCATIONAL TECHNOLOGY</span>
+              <h3>AI Mech Lab</h3>
+              <p>
+                An interactive learning environment exploring
+                AI-assisted education, mechatronics and practical
+                technology experiences.
+              </p>
+              <div class="tag-list">
+                <span>Gemini AI</span>
+                <span>Database Design</span>
+                <span>Education</span>
+              </div>
+              <button class="text-link prototype-trigger"
+                data-prototype="mech">
+                Explore prototype <span>↗</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- CYBERSECURITY -->
+          <article class="project-card">
+            <div class="project-visual project-visual-cyber">
+              <span class="project-number">03</span>
+              <div class="cyber-visual">
+                <div class="cyber-shield">◇</div>
+                <div class="cyber-lines"></div>
+                <span>SECURITY MONITOR</span>
+              </div>
+              <span class="prototype-tag">CONCEPT DEMONSTRATION</span>
+            </div>
+
+            <div class="project-info">
+              <span class="card-label">CYBERSECURITY · CLOUD SECURITY</span>
+              <h3>Security Operations Concept</h3>
+              <p>
+                An exploration of security monitoring interfaces,
+                threat visibility and the presentation of
+                cybersecurity information.
+              </p>
+              <div class="tag-list">
+                <span>Cybersecurity</span>
+                <span>Cloud Security</span>
+                <span>Interface Design</span>
+              </div>
+              <button class="text-link prototype-trigger"
+                data-prototype="cyber">
+                Explore prototype <span>↗</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- PRODUCT DESIGN -->
+          <article class="project-card">
+            <div class="project-visual project-visual-design">
+              <span class="project-number">04</span>
+              <div class="design-visual">
+                <div class="design-panel panel-one"></div>
+                <div class="design-panel panel-two"></div>
+                <div class="design-panel panel-three"></div>
+              </div>
+              <span class="prototype-tag">DESIGN SHOWCASE</span>
+            </div>
+
+            <div class="project-info">
+              <span class="card-label">PRODUCT DESIGN · CREATIVITY</span>
+              <h3>Digital Product Experiences</h3>
+              <p>
+                Interface concepts and visual explorations focused
+                on clarity, usability, aesthetics and meaningful
+                user experiences.
+              </p>
+              <div class="tag-list">
+                <span>Product Design</span>
+                <span>UI Design</span>
+                <span>Prototyping</span>
+              </div>
+              <button class="text-link prototype-trigger"
+                data-prototype="design">
+                Explore prototype <span>↗</span>
+              </button>
+            </div>
+          </article>
+
+        </div>
+
+        <p class="project-note">
+          Prototype demonstrations are illustrative explorations.
+          Their status and available functionality will be identified
+          within each project.
+        </p>
+
+      </div>
+    </section>
+
+    <!-- PROTOTYPE DISPLAY MODAL -->
+    <div class="prototype-modal" id="prototype-modal"
+      aria-hidden="true">
+
+      <div class="prototype-modal-backdrop"
+        data-close-prototype></div>
+
+      <div class="prototype-modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="prototype-title">
+
+        <button class="modal-close" data-close-prototype
+          aria-label="Close prototype">×</button>
+
+        <span class="eyebrow">LITEX PROJECT EXPLORER</span>
+        <h2 id="prototype-title">Project exploration</h2>
+
+        <div class="prototype-stage" id="prototype-stage">
+          <p>Select a project to begin exploring.</p>
+        </div>
+
+        <p class="prototype-description" id="prototype-description">
+          Discover the thinking and ideas behind this project.
+        </p>
+
       </div>
     </div>
 
-    <div class="suggested-questions">
-      <button data-question="Who is Excellence?">Who is Excellence?</button>
-      <button data-question="Tell me about AI Mech Lab">AI Mech Lab</button>
-      <button data-question="What are his skills?">His skills</button>
+    <!-- SKILLS -->
+    <section class="section skills-section" id="skills">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="eyebrow">04 — MY TOOLKIT</span>
+          <h2>Skills & <span>interests.</span></h2>
+          <p>
+            A growing combination of technical capabilities,
+            creative thinking and continuous learning.
+          </p>
+        </div>
+
+        <div class="skills-grid">
+
+          <article class="skill-card">
+            <span class="skill-icon">✳</span>
+            <h3>Artificial Intelligence</h3>
+            <p>AI engineering, intelligent applications and AI integration.</p>
+            <div class="tag-list">
+              <span>Python</span>
+              <span>Gemini</span>
+              <span>NumPy</span>
+            </div>
+          </article>
+
+          <article class="skill-card">
+            <span class="skill-icon">⌘</span>
+            <h3>Cybersecurity</h3>
+            <p>Security principles, cybersecurity analysis and cloud security.</p>
+            <div class="tag-list">
+              <span>Security</span>
+              <span>Cloud</span>
+              <span>Risk Awareness</span>
+            </div>
+          </article>
+
+          <article class="skill-card">
+            <span class="skill-icon">◇</span>
+            <h3>Product Design</h3>
+            <p>Design thinking, visual communication and user experiences.</p>
+            <div class="tag-list">
+              <span>UI Design</span>
+              <span>Prototyping</span>
+              <span>Graphics</span>
+            </div>
+          </article>
+
+          <article class="skill-card">
+            <span class="skill-icon">⌘</span>
+            <h3>Web Development</h3>
+            <p>Building and exploring interactive digital experiences.</p>
+            <div class="tag-list">
+              <span>HTML</span>
+              <span>CSS</span>
+              <span>JavaScript</span>
+              <span>React</span>
+            </div>
+          </article>
+
+          <article class="skill-card">
+            <span class="skill-icon">✎</span>
+            <h3>Creative Communication</h3>
+            <p>Visual storytelling, creative writing and digital content.</p>
+            <div class="tag-list">
+              <span>Graphic Design</span>
+              <span>Video Editing</span>
+              <span>Writing</span>
+            </div>
+          </article>
+
+          <article class="skill-card">
+            <span class="skill-icon">∞</span>
+            <h3>Continuous Learning</h3>
+            <p>Research, experimentation and connecting ideas across disciplines.</p>
+            <div class="tag-list">
+              <span>Research</span>
+              <span>Problem Solving</span>
+              <span>Innovation</span>
+            </div>
+          </article>
+
+        </div>
+
+        <p class="skills-note">
+          Skills represent areas of experience and ongoing development,
+          not a claim of equal proficiency across every technology.
+        </p>
+
+      </div>
+    </section>
+
+    <!-- EDUCATION -->
+    <section class="section education-section" id="education">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="eyebrow">05 — LEARNING & DEVELOPMENT</span>
+          <h2>Education & <span>certifications.</span></h2>
+          <p>
+            The academic and professional learning experiences
+            contributing to my growth.
+          </p>
+        </div>
+
+        <div class="education-grid">
+
+          <article class="education-card">
+            <span class="card-label">ACADEMIC EDUCATION</span>
+            <h3>University of Nigeria, Nsukka</h3>
+            <p>B.Sc. Computer Science</p>
+            <span class="education-detail">Undergraduate studies</span>
+          </article>
+
+          <article class="education-card">
+            <span class="card-label">PROFESSIONAL TRAINING</span>
+            <h3>Paranomics Nigeria</h3>
+            <p>Cybersecurity & Cloud Security</p>
+            <span class="education-detail">Completed · 2026</span>
+          </article>
+
+          <article class="education-card">
+            <span class="card-label">PROFESSIONAL TRAINING</span>
+            <h3>Paranomics Nigeria</h3>
+            <p>Artificial Intelligence</p>
+            <span class="education-detail">Completed · 2026</span>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="section contact-section" id="contact">
+      <div class="container">
+
+        <div class="contact-panel">
+
+          <span class="eyebrow">06 — THE NEXT CONNECTION</span>
+
+          <h2>Have an idea?<br><span>Let's explore it.</span></h2>
+
+          <p>
+            I'm interested in meaningful collaborations,
+            creative opportunities and conversations about
+            technology, innovation and problem-solving.
+          </p>
+
+          <a href="#contact-details" class="button button-primary">
+            Let's connect <span>↗</span>
+          </a>
+
+          <div class="contact-details" id="contact-details">
+            <span>OPEN TO CONNECTIONS</span>
+            <p>
+              Professional contact and social links will be
+              available here.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- LITEX AI ASSISTANT -->
+  <div class="assistant-widget" id="assistant-widget">
+
+    <div class="assistant-panel" id="assistant-panel"
+      aria-hidden="true">
+
+      <div class="assistant-header">
+        <div>
+          <span class="assistant-status"></span>
+          <strong>Litex Assistant</strong>
+          <p>Your guide to this portfolio</p>
+        </div>
+
+        <button class="assistant-close" id="assistant-close"
+          aria-label="Close assistant">×</button>
+      </div>
+
+      <div class="assistant-messages" id="assistant-messages"
+        aria-live="polite">
+
+        <div class="assistant-message assistant-bot">
+          Hello! Welcome to Litex. I'm here to help you explore
+          Excellence's work, projects and professional journey.
+          What would you like to discover?
+        </div>
+
+      </div>
+
+      <div class="assistant-suggestions">
+        <button data-question="Tell me about Excellence">
+          About Excellence
+        </button>
+        <button data-question="What projects are here?">
+          Explore projects
+        </button>
+        <button data-question="What are the skills?">
+          Skills
+        </button>
+      </div>
+
+      <form class="assistant-input" id="assistant-form">
+        <input type="text" id="assistant-question"
+          placeholder="Ask me something..."
+          aria-label="Ask Litex Assistant"
+          autocomplete="off">
+        <button type="submit" aria-label="Send message">↑</button>
+      </form>
+
     </div>
 
-    <form id="chatForm">
-      <input
-        id="chatInput"
-        type="text"
-        placeholder="Ask me something..."
-        autocomplete="off"
-        required
-      >
-      <button type="submit" aria-label="Send message">➤</button>
-    </form>
-  </section>
+    <button class="assistant-launcher" id="assistant-launcher"
+      aria-label="Open Litex Assistant"
+      aria-expanded="false">
+      <span class="assistant-launcher-icon">✳</span>
+      <span class="assistant-launcher-label">Ask Litex</span>
+    </button>
 
+  </div>
+
+  <!-- FOOTER -->
   <footer class="site-footer">
-    <span>© 2026 EXCELLENCE ODIMEGWU</span>
-    <span>EVERY STAR TELLS A STORY.</span>
+    <div class="container footer-content">
+
+      <a class="brand" href="#home">LITEX<span>.</span></a>
+
+      <p>Exploring ideas. Building possibilities.</p>
+
+      <span class="footer-copyright">
+        © <span id="current-year">2026</span> Excellence Odimegwu.
+        All rights reserved.
+      </span>
+
+    </div>
   </footer>
 
-  <script type="module" src="app.js"></script>
+  <button class="back-to-top" id="back-to-top"
+    aria-label="Back to top">↑</button>
+
 </body>
 </html>
+
+
+

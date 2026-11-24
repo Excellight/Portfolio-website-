@@ -1,513 +1,810 @@
 
-import * as THREE from 'three';
+/* =========================================
+   LITEX — INTERIM PORTFOLIO
+   Interactive experience
+========================================= */
 
-const canvas = document.querySelector('#universe');
-const scene = new THREE.Scene();
-scene.fog = new THREE.FogExp2(0x050711, 0.012);
+document.addEventListener("DOMContentLoaded", () => {
 
-const camera = new THREE.PerspectiveCamera(65, innerWidth / innerHeight, 0.1, 1800);
-camera.position.set(0, 0, 34);
+  /* =====================================
+     1. ELEMENT REFERENCES
+  ===================================== */
 
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
-renderer.setPixelRatio(Math.min(devicePixelRatio, 1.7));
-renderer.setSize(innerWidth, innerHeight);
-renderer.outputColorSpace = THREE.SRGBColorSpace;
+  const loader = document.getElementById("loader");
 
-const clock = new THREE.Clock();
-const raycaster = new THREE.Raycaster();
-const pointer = new THREE.Vector2(9, 9);
+  const menuToggle = document.getElementById("menu-toggle");
+  const navLinks = document.getElementById("nav-links");
 
-let travelling = false;
-let reducedMotion = false;
-let activeWorld = null;
-let targetCamera = new THREE.Vector3(0, 0, 34);
-let pointerX = 0;
-let pointerY = 0;
+  const prototypeModal = document.getElementById("prototype-modal");
+  const prototypeTitle = document.getElementById("prototype-title");
+  const prototypeStage = document.getElementById("prototype-stage");
+  const prototypeDescription = document.getElementById("prototype-description");
 
-// Deep-space starfield
-function makeStars(count, spread, zMin, zMax, size, opacity) {
-  const positions = new Float32Array(count * 3);
-  const colors = new Float32Array(count * 3);
+  const assistantLauncher = document.getElementById("assistant-launcher");
+  const assistantPanel = document.getElementById("assistant-panel");
+  const assistantClose = document.getElementById("assistant-close");
+  const assistantForm = document.getElementById("assistant-form");
+  const assistantQuestion = document.getElementById("assistant-question");
+  const assistantMessages = document.getElementById("assistant-messages");
 
-  const palette = [
-    new THREE.Color('#d9e7ff'),
-    new THREE.Color('#aaa8ff'),
-    new THREE.Color('#82cfff'),
-    new THREE.Color('#fff0d7')
-  ];
+  const backToTop = document.getElementById("back-to-top");
 
-  for (let i = 0; i < count; i++) {
-    positions[i * 3] = (Math.random() - .5) * spread;
-    positions[i * 3 + 1] = (Math.random() - .5) * spread;
-    positions[i * 3 + 2] = zMin + Math.random() * (zMax - zMin);
 
-    const c = palette[Math.floor(Math.random() * palette.length)];
+  /* =====================================
+     2. LOADING SCREEN
+  ===================================== */
 
-    colors[i * 3] = c.r;
-    colors[i * 3 + 1] = c.g;
-    colors[i * 3 + 2] = c.b;
-  }
-
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-  const mat = new THREE.PointsMaterial({
-    size,
-    sizeAttenuation: true,
-    vertexColors: true,
-    transparent: true,
-    opacity,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending
-  });
-
-  const points = new THREE.Points(geo, mat);
-  scene.add(points);
-  return points;
-}
-
-const farStars = makeStars(5500, 250, -900, 40, .72, .8);
-const nearStars = makeStars(1300, 100, -220, 20, 1.15, .9);
-
-const ambient = new THREE.AmbientLight(0x8795ff, .65);
-scene.add(ambient);
-
-const pointLight = new THREE.PointLight(0x9993ff, 65, 130);
-pointLight.position.set(0, 0, 15);
-scene.add(pointLight);
-
-// Portfolio worlds
-const worlds = [
-  {
-    id: 'student',
-    name: 'The Growing World',
-    short: 'Student Management System',
-    type: 'WORLD 01 / IN PROGRESS',
-    color: 0x76d9a7,
-    position: new THREE.Vector3(-13, 4, -48),
-    description: 'This student management system is more than an admin dashboard. It is the starting point of a larger learning experience, where student activity, progress and performance can help mentors understand how learners grow. The bigger vision is still being developed.',
-    tags: ['React', 'Python · Flask', 'Learning analytics'],
-    link: '',
-    linkLabel: ''
-  },
-  {
-    id: 'mech',
-    name: 'The Mech Lab',
-    short: 'AI Mech Lab',
-    type: 'WORLD 02 / AI & LEARNING',
-    color: 0x87bfff,
-    position: new THREE.Vector3(12, 6, -90),
-    description: 'AI Mech Lab is an AI-powered learning environment built around practical engineering education. Excellence contributes to database design and Gemini AI adaptation and integration. The wider platform is being developed collaboratively.',
-    tags: ['AI integration', 'Database design', 'Engineering education'],
-    link: '',
-    linkLabel: ''
-  },
-  {
-    id: 'cyber',
-    name: 'The Cyber Realm',
-    short: 'Cybersecurity & Cloud',
-    type: 'WORLD 03 / SECURITY',
-    color: 0xb29bff,
-    position: new THREE.Vector3(-10, -7, -135),
-    description: 'A space dedicated to building safer digital experiences. Explore Excellence’s interests and training in cybersecurity, cloud security and the role of security-minded thinking in AI-powered products.',
-    tags: ['Cybersecurity', 'Cloud security', 'Secure AI'],
-    link: '',
-    linkLabel: ''
-  },
-  {
-    id: 'design',
-    name: 'The Creative Orbit',
-    short: 'Product & Graphic Design',
-    type: 'WORLD 04 / DESIGN',
-    color: 0xffc28a,
-    position: new THREE.Vector3(14, -5, -180),
-    description: 'Good technology should be useful and understandable. This world represents Excellence’s product design practice, visual thinking and interest in creating clear, thoughtful digital experiences.',
-    tags: ['Product design', 'Visual design', 'Problem solving'],
-    link: '',
-    linkLabel: ''
-  },
-  {
-    id: 'about',
-    name: 'The Origin',
-    short: 'Meet Excellence',
-    type: 'WORLD 05 / ABOUT',
-    color: 0xffe7a1,
-    position: new THREE.Vector3(0, 8, -230),
-    description: 'Excellence Odimegwu is a Computer Science student at the University of Nigeria, Nsukka, exploring AI engineering, cybersecurity, product design and web development. He enjoys learning, building ideas and solving practical problems with technology.',
-    tags: ['Computer Science', 'AI enthusiast', 'Builder of ideas'],
-    link: '',
-    linkLabel: ''
-  }
-];
-
-function makeGlowTexture() {
-  const c = document.createElement('canvas');
-  c.width = c.height = 128;
-
-  const ctx = c.getContext('2d');
-  const g = ctx.createRadialGradient(64, 64, 2, 64, 64, 62);
-
-  g.addColorStop(0, 'rgba(255,255,255,1)');
-  g.addColorStop(.12, 'rgba(255,255,255,.95)');
-  g.addColorStop(.3, 'rgba(180,180,255,.42)');
-  g.addColorStop(1, 'rgba(120,120,255,0)');
-
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, 128, 128);
-
-  return new THREE.CanvasTexture(c);
-}
-
-const glowTexture = makeGlowTexture();
-const clickable = [];
-
-worlds.forEach((w, i) => {
-  const group = new THREE.Group();
-  group.position.copy(w.position);
-  group.userData.world = w;
-  scene.add(group);
-
-  const core = new THREE.Mesh(
-    new THREE.SphereGeometry(1.0 + (i % 2) * .18, 32, 32),
-    new THREE.MeshStandardMaterial({
-      color: w.color,
-      emissive: w.color,
-      emissiveIntensity: 1.3,
-      roughness: .28,
-      metalness: .1
-    })
-  );
-
-  group.add(core);
-
-  const halo = new THREE.Sprite(
-    new THREE.SpriteMaterial({
-      map: glowTexture,
-      color: w.color,
-      transparent: true,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-      opacity: .8
-    })
-  );
-
-  halo.scale.set(9, 9, 1);
-  group.add(halo);
-
-  const ring = new THREE.Mesh(
-    new THREE.TorusGeometry(2.1, .018, 8, 100),
-    new THREE.MeshBasicMaterial({
-      color: w.color,
-      transparent: true,
-      opacity: .5
-    })
-  );
-
-  ring.rotation.x = 1.05;
-  ring.rotation.y = .3;
-  group.add(ring);
-
-  const ring2 = new THREE.Mesh(
-    new THREE.TorusGeometry(2.7, .009, 6, 100),
-    new THREE.MeshBasicMaterial({
-      color: 0xffffff,
-      transparent: true,
-      opacity: .2
-    })
-  );
-
-  ring2.rotation.x = .65;
-  ring2.rotation.y = 1.1;
-  group.add(ring2);
-
-  core.userData.world = w;
-  core.userData.group = group;
-  clickable.push(core);
-
-  const sat = new THREE.Mesh(
-    new THREE.SphereGeometry(.07, 12, 12),
-    new THREE.MeshBasicMaterial({ color: 0xffffff })
-  );
-
-  group.add(sat);
-  sat.userData.orbit = true;
-
-  w.group = group;
-  w.core = core;
-  w.halo = halo;
-  w.ring = ring;
-  w.satellite = sat;
-});
-
-// Interface elements
-const intro = document.querySelector('#intro');
-const hud = document.querySelector('.hud');
-const legend = document.querySelector('#legend');
-
-const card = document.querySelector('#worldCard');
-const closeCard = document.querySelector('#closeCard');
-const hudStatus = document.querySelector('#hudStatus');
-
-function begin() {
-  travelling = true;
-  intro.classList.add('is-hidden');
-  hud.classList.add('visible');
-  legend.classList.add('visible');
-  hudStatus.textContent = 'DEEP SPACE // SELECT A WORLD';
-}
-
-document.querySelector('#exploreBtn').addEventListener('click', begin);
-
-function openWorld(w) {
-  begin();
-  activeWorld = w;
-
-  targetCamera.set(
-    w.position.x * .68,
-    w.position.y * .68,
-    w.position.z + 13
-  );
-
-  hudStatus.textContent = `${w.type} // DESTINATION FOUND`;
-
-  document.querySelector('#worldType').textContent = w.type;
-  document.querySelector('#worldTitle').textContent = w.name;
-  document.querySelector('#worldDescription').textContent = w.description;
-
-  const meta = document.querySelector('#worldMeta');
-  meta.innerHTML = '';
-
-  w.tags.forEach(t => {
-    const s = document.createElement('span');
-    s.textContent = t;
-    meta.appendChild(s);
-  });
-
-  const link = document.querySelector('#worldLink');
-  link.hidden = !w.link;
-  link.href = w.link || '#';
-  link.textContent = (w.linkLabel || 'Explore project') + ' ↗';
-
-  card.classList.add('open');
-  card.setAttribute('aria-hidden', 'false');
-}
-
-function closeWorld() {
-  activeWorld = null;
-  card.classList.remove('open');
-  card.setAttribute('aria-hidden', 'true');
-
-  targetCamera.set(0, 0, -4);
-  hudStatus.textContent = 'DEEP SPACE // SELECT A WORLD';
-}
-
-closeCard.addEventListener('click', closeWorld);
-
-// Pointer movement and world selection
-function setPointer(e) {
-  pointer.x = (e.clientX / innerWidth) * 2 - 1;
-  pointer.y = -(e.clientY / innerHeight) * 2 + 1;
-
-  pointerX = pointer.x;
-  pointerY = pointer.y;
-}
-
-addEventListener('pointermove', setPointer);
-
-// Listen on the canvas only, so interface buttons do not accidentally select worlds.
-canvas.addEventListener('pointerdown', () => {
-  if (!travelling) begin();
-
-  raycaster.setFromCamera(pointer, camera);
-
-  const hits = raycaster.intersectObjects(clickable, false);
-
-  if (hits.length) {
-    openWorld(hits[0].object.userData.world);
-  }
-});
-
-addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeWorld();
-  if (e.key === 'Enter' && !travelling) begin();
-});
-
-// Reduced-motion control
-const motionBtn = document.querySelector('#motionToggle');
-
-motionBtn.addEventListener('click', () => {
-  reducedMotion = !reducedMotion;
-
-  motionBtn.setAttribute('aria-pressed', String(reducedMotion));
-
-  motionBtn.innerHTML = reducedMotion
-    ? '◉ <span>Motion reduced</span>'
-    : '◌ <span>Reduce motion</span>';
-});
-
-// Litex local FAQ assistant
-const facts = [
-  {
-    keys: ['who', 'excellence', 'about'],
-    answer: 'Excellence Odimegwu is a Computer Science student at the University of Nigeria, Nsukka. He is exploring AI engineering, cybersecurity, product design and web development, and enjoys turning ideas into useful technology.'
-  },
-  {
-    keys: ['student', 'management', 'stat'],
-    answer: 'The Student Management System is an ongoing React and Python Flask project. It began as an admin-focused student management tool and is intended as a foundation for a broader learning and student-progress experience. It is still in development.'
-  },
-  {
-    keys: ['mech', 'lab', 'gemini'],
-    answer: 'AI Mech Lab is an AI-powered engineering learning platform. Excellence’s responsibility is database design and Gemini AI adaptation and integration. Other team members handle the wider API development.'
-  },
-  {
-    keys: ['cyber', 'security', 'cloud'],
-    answer: 'Excellence has pursued cybersecurity and cloud-security training and is interested in building secure, trustworthy digital products, including AI-powered applications.'
-  },
-  {
-    keys: ['skill', 'technology', 'stack', 'code'],
-    answer: 'His areas of interest include Python, JavaScript, React, Flask, database design, AI integration, cybersecurity, product design and web development.'
-  },
-  {
-    keys: ['design', 'graphic', 'product'],
-    answer: 'Excellence works across product and graphic design, with an interest in making digital products clear, useful and visually engaging.'
-  },
-  {
-    keys: ['contact', 'hire', 'email', 'linkedin', 'github'],
-    answer: 'You can connect with Excellence through the Email, LinkedIn and GitHub links in the Contact section of this portfolio.'
-  }
-];
-
-function answerFor(q) {
-  const s = q.toLowerCase();
-
-  for (const f of facts) {
-    if (f.keys.some(k => s.includes(k))) {
-      return f.answer;
+  window.addEventListener("load", () => {
+    if (loader) {
+      setTimeout(() => {
+        loader.style.display = "none";
+      }, 2400);
     }
-  }
-
-  return 'I’m still learning the details of this universe. Try asking about Excellence, the Student Management System, AI Mech Lab, cybersecurity, design or his technical skills.';
-}
-
-const chatPanel = document.querySelector('#chatPanel');
-const chatMessages = document.querySelector('#chatMessages');
-
-function toggleChat(force) {
-  const open = force ?? !chatPanel.classList.contains('open');
-
-  chatPanel.classList.toggle('open', open);
-  chatPanel.setAttribute('aria-hidden', String(!open));
-
-  if (open) {
-    document.querySelector('#chatInput').focus();
-  }
-}
-
-document.querySelector('#litexLaunch').addEventListener('click', () => toggleChat());
-document.querySelector('#chatClose').addEventListener('click', () => toggleChat(false));
-
-function addBubble(text, who) {
-  const b = document.createElement('div');
-  b.className = 'bubble ' + who;
-  b.textContent = text;
-
-  chatMessages.appendChild(b);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-function ask(q) {
-  if (!q.trim()) return;
-
-  addBubble(q, 'user');
-  addBubble(answerFor(q), 'bot');
-}
-
-document.querySelector('#chatForm').addEventListener('submit', e => {
-  e.preventDefault();
-
-  const input = document.querySelector('#chatInput');
-
-  ask(input.value);
-  input.value = '';
-});
-
-document.querySelectorAll('[data-question]').forEach(b => {
-  b.addEventListener('click', () => ask(b.dataset.question));
-});
-
-// Main animation loop
-function animate() {
-  requestAnimationFrame(animate);
-
-  const dt = Math.min(clock.getDelta(), .04);
-  const t = clock.elapsedTime;
-
-  if (!reducedMotion) {
-    farStars.rotation.y += dt * .0018;
-    farStars.rotation.x = Math.sin(t * .035) * .018;
-
-    nearStars.rotation.y -= dt * .0028;
-    nearStars.rotation.x = Math.cos(t * .04) * .025;
-  }
-
-  // Smoothly move the camera into the universe after Explore is clicked.
-  if (travelling && !reducedMotion && !activeWorld) {
-    targetCamera.z = -12;
-  }
-
-  if (!reducedMotion) {
-    camera.position.x +=
-      (targetCamera.x + pointerX * .9 - camera.position.x) *
-      Math.min(1, dt * .65);
-
-    camera.position.y +=
-      (targetCamera.y + pointerY * .55 - camera.position.y) *
-      Math.min(1, dt * .65);
-  } else {
-    camera.position.x += (targetCamera.x - camera.position.x) * .04;
-    camera.position.y += (targetCamera.y - camera.position.y) * .04;
-  }
-
-  camera.position.z +=
-    (targetCamera.z - camera.position.z) *
-    Math.min(1, dt * .75);
-
-  camera.lookAt(
-    camera.position.x * .12,
-    camera.position.y * .12,
-    camera.position.z - 24
-  );
-
-  worlds.forEach((w, i) => {
-    w.group.rotation.y = t * (.12 + i * .018);
-    w.ring.rotation.z = t * (.12 + i * .02);
-
-    w.halo.material.opacity = .62 + Math.sin(t * 1.8 + i) * .18;
-
-    w.satellite.position.set(
-      Math.cos(t * .8 + i) * 3.2,
-      Math.sin(t * .8 + i) * 1.5,
-      Math.sin(t * .8 + i) * 1.3
-    );
   });
 
-  raycaster.setFromCamera(pointer, camera);
 
-  const hits = raycaster.intersectObjects(clickable, false);
-  document.body.style.cursor = hits.length ? 'pointer' : 'default';
+  /* =====================================
+     3. CURRENT YEAR
+  ===================================== */
 
-  renderer.render(scene, camera);
-}
+  const currentYear = document.getElementById("current-year");
 
-animate();
+  if (currentYear) {
+    currentYear.textContent = new Date().getFullYear();
+  }
 
-// Responsive resizing
-addEventListener('resize', () => {
-  camera.aspect = innerWidth / innerHeight;
-  camera.updateProjectionMatrix();
 
-  renderer.setSize(innerWidth, innerHeight);
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.7));
+  /* =====================================
+     4. MOBILE NAVIGATION
+  ===================================== */
+
+  function closeMenu() {
+    if (!menuToggle || !navLinks) return;
+
+    navLinks.classList.remove("open");
+    menuToggle.setAttribute("aria-expanded", "false");
+    menuToggle.setAttribute("aria-label", "Open navigation menu");
+  }
+
+  if (menuToggle && navLinks) {
+
+    menuToggle.addEventListener("click", () => {
+
+      const isOpen = navLinks.classList.toggle("open");
+
+      menuToggle.setAttribute("aria-expanded", String(isOpen));
+
+      menuToggle.setAttribute(
+        "aria-label",
+        isOpen ? "Close navigation menu" : "Open navigation menu"
+      );
+
+    });
+
+    navLinks.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", closeMenu);
+    });
+
+    document.addEventListener("click", event => {
+
+      if (
+        navLinks.classList.contains("open") &&
+        !navLinks.contains(event.target) &&
+        !menuToggle.contains(event.target)
+      ) {
+        closeMenu();
+      }
+
+    });
+
+  }
+
+
+  /* =====================================
+     5. SMOOTH NAVIGATION
+  ===================================== */
+
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+
+    link.addEventListener("click", event => {
+
+      const targetId = link.getAttribute("href");
+
+      if (!targetId || targetId === "#") return;
+
+      const target = document.querySelector(targetId);
+
+      if (!target) return;
+
+      event.preventDefault();
+
+      target.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+    });
+
+  });
+
+
+  /* =====================================
+     6. SCROLL EFFECTS
+  ===================================== */
+
+  const header = document.querySelector(".site-header");
+  const heroClouds = document.querySelectorAll(".hero-cloud");
+  const heroGlow = document.querySelector(".hero-glow");
+
+  let scrollTicking = false;
+
+  function updateScrollEffects() {
+
+    const scrollPosition = window.scrollY;
+
+    // Navigation appearance
+    if (header) {
+
+      if (scrollPosition > 50) {
+        header.style.boxShadow = "0 8px 30px rgba(65,102,124,0.07)";
+      } else {
+        header.style.boxShadow = "none";
+      }
+
+    }
+
+    // Back-to-top visibility
+    if (backToTop) {
+      backToTop.classList.toggle("visible", scrollPosition > 500);
+    }
+
+    // Gradually move the atmospheric clouds
+    heroClouds.forEach((cloud, index) => {
+
+      const movement = Math.min(scrollPosition * 0.12, 120);
+
+      cloud.style.transform =
+        `translate3d(${movement * (index % 2 === 0 ? 1 : -1)}px, ${movement}px, 0)`;
+
+      cloud.style.opacity =
+        String(Math.max(0.15, 1 - scrollPosition / 850));
+
+    });
+
+    if (heroGlow) {
+      heroGlow.style.opacity =
+        String(Math.max(0.1, 1 - scrollPosition / 1100));
+    }
+
+    scrollTicking = false;
+
+  }
+
+  window.addEventListener("scroll", () => {
+
+    if (!scrollTicking) {
+      window.requestAnimationFrame(updateScrollEffects);
+      scrollTicking = true;
+    }
+
+  }, { passive: true });
+
+
+  /* =====================================
+     7. BACK TO TOP
+  ===================================== */
+
+  if (backToTop) {
+
+    backToTop.addEventListener("click", () => {
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+
+    });
+
+  }
+
+
+  /* =====================================
+     8. PROJECT PROTOTYPE CONTENT
+  ===================================== */
+
+  const prototypes = {
+
+    student: {
+      title: "Student Management System",
+
+      description:
+        "A concept for connecting student records, academic activities, performance and administrative insights.",
+
+      content: `
+        <div style="width:100%;max-width:650px">
+
+          <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:20px">
+            <div>
+              <small style="color:#64869a">STUDENT PORTAL</small>
+              <h3 style="margin-top:5px">Dashboard Overview</h3>
+            </div>
+            <span style="padding:7px 12px;background:#e4f1f5;border-radius:20px;font-size:10px">
+              DEMO
+            </span>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+
+            <div style="padding:15px;background:white;border-radius:12px">
+              <small>Students</small>
+              <h2 style="color:#527f9b">128</h2>
+            </div>
+
+            <div style="padding:15px;background:white;border-radius:12px">
+              <small>Courses</small>
+              <h2 style="color:#527f9b">12</h2>
+            </div>
+
+            <div style="padding:15px;background:white;border-radius:12px">
+              <small>Activities</small>
+              <h2 style="color:#527f9b">36</h2>
+            </div>
+
+          </div>
+
+          <div style="margin-top:18px;padding:20px;background:white;border-radius:12px">
+
+            <strong>Learning Progress</strong>
+
+            <div style="height:9px;margin-top:15px;background:#e8f0f4;border-radius:20px;overflow:hidden">
+              <div style="height:100%;width:75%;background:#79aabd;border-radius:20px"></div>
+            </div>
+
+            <small style="display:block;margin-top:8px;color:#718492">
+              Illustrative progress indicator — 75%
+            </small>
+
+          </div>
+
+          <p style="margin-top:15px;color:#718492;font-size:11px">
+            This is a visual demonstration, not a live student database.
+          </p>
+
+        </div>
+      `
+    },
+
+
+    mech: {
+      title: "AI Mech Lab",
+
+      description:
+        "An exploration of an AI-assisted learning environment for practical technology education and mechatronics.",
+
+      content: `
+        <div style="width:100%;max-width:600px;text-align:center">
+
+          <div style="width:100px;height:100px;margin:0 auto 20px;display:grid;place-items:center;border-radius:28px;background:linear-gradient(145deg,#5489a5,#a5cbd9);color:white;font-size:35px;font-weight:800;box-shadow:0 15px 35px rgba(65,120,150,.2)">
+            AI
+          </div>
+
+          <h3>Welcome to the Learning Lab</h3>
+
+          <p style="margin-top:10px;color:#718492;font-size:13px">
+            Imagine a learning environment where artificial intelligence
+            helps learners understand complex engineering concepts.
+          </p>
+
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:25px">
+
+            <div style="padding:20px;background:white;border-radius:14px">
+              <strong>Learning Modules</strong>
+              <p style="margin-top:8px;color:#718492;font-size:11px">
+                Structured technical lessons
+              </p>
+            </div>
+
+            <div style="padding:20px;background:white;border-radius:14px">
+              <strong>AI Guidance</strong>
+              <p style="margin-top:8px;color:#718492;font-size:11px">
+                Assisted learning and explanations
+              </p>
+            </div>
+
+            <div style="padding:20px;background:white;border-radius:14px">
+              <strong>Practical Projects</strong>
+              <p style="margin-top:8px;color:#718492;font-size:11px">
+                Applied engineering concepts
+              </p>
+            </div>
+
+            <div style="padding:20px;background:white;border-radius:14px">
+              <strong>Progress Tracking</strong>
+              <p style="margin-top:8px;color:#718492;font-size:11px">
+                Learning activity insights
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+      `
+    },
+
+
+    cyber: {
+      title: "Security Operations Concept",
+
+      description:
+        "A conceptual security monitoring interface showing how security information could be organized and presented.",
+
+      content: `
+        <div style="width:100%;max-width:650px">
+
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+            <h3>Security Overview</h3>
+            <span style="padding:7px 12px;background:#e2f2e9;color:#477e60;border-radius:20px;font-size:10px">
+              SIMULATED
+            </span>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:20px">
+
+            <div style="padding:15px;background:white;border-radius:12px">
+              <small>Systems</small>
+              <h2 style="color:#527f9b">08</h2>
+            </div>
+
+            <div style="padding:15px;background:white;border-radius:12px">
+              <small>Alerts</small>
+              <h2 style="color:#bd9560">03</h2>
+            </div>
+
+            <div style="padding:15px;background:white;border-radius:12px">
+              <small>Status</small>
+              <h2 style="color:#5d9a7b;font-size:17px">Demo</h2>
+            </div>
+
+          </div>
+
+          <div style="margin-top:18px;padding:20px;background:white;border-radius:12px">
+
+            <strong>Monitoring Activity</strong>
+
+            <div style="margin-top:15px;padding:12px;background:#f0f6f8;border-radius:9px">
+              <small>System event</small>
+              <p style="font-size:12px">Network activity recorded</p>
+            </div>
+
+            <div style="margin-top:10px;padding:12px;background:#f0f6f8;border-radius:9px">
+              <small>Security event</small>
+              <p style="font-size:12px">Authentication review required</p>
+            </div>
+
+          </div>
+
+          <p style="margin-top:15px;color:#718492;font-size:11px">
+            All displayed events and values are fictional demonstrations.
+            This interface does not monitor a real network.
+          </p>
+
+        </div>
+      `
+    },
+
+
+    design: {
+      title: "Digital Product Experiences",
+
+      description:
+        "A creative exploration of product interfaces, visual systems and user-centred digital experiences.",
+
+      content: `
+        <div style="width:100%;max-width:600px">
+
+          <h3 style="text-align:center">Design Exploration</h3>
+
+          <p style="margin-top:8px;text-align:center;color:#718492;font-size:12px">
+            A small collection of visual interface concepts.
+          </p>
+
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin-top:25px">
+
+            <div style="padding:20px;border-radius:15px;background:linear-gradient(145deg,#d7e9f0,#aacbd9)">
+              <div style="height:90px;border-radius:10px;background:rgba(255,255,255,.55)"></div>
+              <strong style="display:block;margin-top:12px">Interface One</strong>
+              <small>Clean digital experience</small>
+            </div>
+
+            <div style="padding:20px;border-radius:15px;background:linear-gradient(145deg,#e9e1f1,#c8bbdd)">
+              <div style="height:90px;border-radius:10px;background:rgba(255,255,255,.55)"></div>
+              <strong style="display:block;margin-top:12px">Interface Two</strong>
+              <small>Creative visual language</small>
+            </div>
+
+            <div style="padding:20px;border-radius:15px;background:linear-gradient(145deg,#e4ebdf,#b9cbb0)">
+              <div style="height:90px;border-radius:10px;background:rgba(255,255,255,.55)"></div>
+              <strong style="display:block;margin-top:12px">Interface Three</strong>
+              <small>Simple interaction patterns</small>
+            </div>
+
+            <div style="padding:20px;border-radius:15px;background:linear-gradient(145deg,#f0e5d8,#ddc5ac)">
+              <div style="height:90px;border-radius:10px;background:rgba(255,255,255,.55)"></div>
+              <strong style="display:block;margin-top:12px">Interface Four</strong>
+              <small>Visual storytelling</small>
+            </div>
+
+          </div>
+
+        </div>
+      `
+    }
+
+  };
+
+
+  /* =====================================
+     9. OPEN PROJECT PROTOTYPES
+  ===================================== */
+
+  function openPrototype(projectKey) {
+
+    const project = prototypes[projectKey];
+
+    if (!project || !prototypeModal) return;
+
+    prototypeTitle.textContent = project.title;
+    prototypeStage.innerHTML = project.content;
+    prototypeDescription.textContent = project.description;
+
+    prototypeModal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("modal-open");
+
+    const closeButton = prototypeModal.querySelector(".modal-close");
+
+    if (closeButton) {
+      closeButton.focus();
+    }
+
+  }
+
+
+  /* =====================================
+     10. CLOSE PROJECT PROTOTYPES
+  ===================================== */
+
+  function closePrototype() {
+
+    if (!prototypeModal) return;
+
+    prototypeModal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("modal-open");
+
+  }
+
+
+  document.querySelectorAll(".prototype-trigger").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+      const projectKey = button.dataset.prototype;
+
+      openPrototype(projectKey);
+
+    });
+
+  });
+
+
+  document.querySelectorAll("[data-close-prototype]").forEach(button => {
+
+    button.addEventListener("click", closePrototype);
+
+  });
+
+
+  /* =====================================
+     11. KEYBOARD ACCESSIBILITY
+  ===================================== */
+
+  document.addEventListener("keydown", event => {
+
+    if (event.key === "Escape") {
+
+      closePrototype();
+
+      closeMenu();
+
+      closeAssistant();
+
+    }
+
+  });
+
+
+  /* =====================================
+     12. LITEX ASSISTANT
+  ===================================== */
+
+  function openAssistant() {
+
+    if (!assistantPanel) return;
+
+    assistantPanel.setAttribute("aria-hidden", "false");
+
+    assistantLauncher.setAttribute("aria-expanded", "true");
+
+    assistantQuestion.focus();
+
+  }
+
+
+  function closeAssistant() {
+
+    if (!assistantPanel) return;
+
+    assistantPanel.setAttribute("aria-hidden", "true");
+
+    assistantLauncher.setAttribute("aria-expanded", "false");
+
+  }
+
+
+  if (assistantLauncher) {
+    assistantLauncher.addEventListener("click", openAssistant);
+  }
+
+  if (assistantClose) {
+    assistantClose.addEventListener("click", closeAssistant);
+  }
+
+
+  /* =====================================
+     13. ASSISTANT MESSAGE DISPLAY
+  ===================================== */
+
+  function addMessage(message, sender) {
+
+    const messageElement = document.createElement("div");
+
+    messageElement.classList.add(
+      "assistant-message",
+      sender === "user" ? "assistant-user" : "assistant-bot"
+    );
+
+    // Use textContent to safely display user input.
+    messageElement.textContent = message;
+
+    assistantMessages.appendChild(messageElement);
+
+    assistantMessages.scrollTop = assistantMessages.scrollHeight;
+
+  }
+
+
+  /* =====================================
+     14. ASSISTANT KNOWLEDGE BASE
+  ===================================== */
+
+  function getAssistantResponse(question) {
+
+    const text = question.toLowerCase().trim();
+
+    if (
+      text.includes("hello") ||
+      text.includes("hi") ||
+      text.includes("hey")
+    ) {
+      return "Hello! Welcome to Litex. What would you like to know about Excellence's journey, projects or interests?";
+    }
+
+
+    if (
+      text.includes("who") ||
+      text.includes("about") ||
+      text.includes("excellence") ||
+      text.includes("person")
+    ) {
+      return "Excellence Odimegwu is a Computer Science student at the University of Nigeria, Nsukka, exploring AI engineering, cybersecurity, product design and web development. He enjoys combining creativity with technical problem-solving.";
+    }
+
+
+    if (
+      text.includes("project") ||
+      text.includes("build") ||
+      text.includes("work")
+    ) {
+      return "There are four featured project explorations: Student Management System, AI Mech Lab, Security Operations Concept and Digital Product Experiences. Visit the Projects section and select Explore Prototype to see their demonstrations.";
+    }
+
+
+    if (
+      text.includes("skill") ||
+      text.includes("technology") ||
+      text.includes("tech") ||
+      text.includes("program")
+    ) {
+      return "Excellence's areas of interest include Python, web development, AI integration, cybersecurity, cloud security, product design, graphic design, video editing and creative writing.";
+    }
+
+
+    if (
+      text.includes("education") ||
+      text.includes("school") ||
+      text.includes("university") ||
+      text.includes("study")
+    ) {
+      return "Excellence studies Computer Science at the University of Nigeria, Nsukka. He has also completed professional training in cybersecurity and cloud security, as well as artificial intelligence.";
+    }
+
+
+    if (
+      text.includes("experience") ||
+      text.includes("internship") ||
+      text.includes("career")
+    ) {
+      return "His experience includes product design and front-end development with Integral Builder Explorers, professional training and collaborative technology work, including contributions to AI Mech Lab.";
+    }
+
+
+    if (
+      text.includes("contact") ||
+      text.includes("connect") ||
+      text.includes("hire") ||
+      text.includes("collaborat")
+    ) {
+      return "Thank you for your interest! Visit the Contact section to find professional contact details and connection options.";
+    }
+
+
+    if (
+      text.includes("ai mech") ||
+      text.includes("mechatronic")
+    ) {
+      return "AI Mech Lab is an educational technology project exploring AI-assisted learning and mechatronics. Excellence's responsibilities include database design and Gemini AI adaptation and integration.";
+    }
+
+
+    if (
+      text.includes("cyber") ||
+      text.includes("security")
+    ) {
+      return "Cybersecurity and cloud security are among Excellence's professional interests. He has completed relevant training and is exploring secure digital systems.";
+    }
+
+
+    if (
+      text.includes("design") ||
+      text.includes("creative")
+    ) {
+      return "Excellence is interested in product design, user experiences, graphic design and creative communication. He enjoys turning ideas into clear and meaningful visual experiences.";
+    }
+
+
+    if (
+      text.includes("litex") ||
+      text.includes("website")
+    ) {
+      return "Litex is Excellence's personal digital portfolio. It is designed as an interactive environment for exploring his professional journey, projects, ideas and interests.";
+    }
+
+
+    return "That's an interesting question! I can currently help you explore Excellence's background, experience, education, skills and projects. Try asking me about one of those topics.";
+  }
+
+
+  /* =====================================
+     15. ASSISTANT QUESTION HANDLING
+  ===================================== */
+
+  function askAssistant(question) {
+
+    const cleanQuestion = question.trim();
+
+    if (!cleanQuestion) return;
+
+    addMessage(cleanQuestion, "user");
+
+    assistantQuestion.value = "";
+
+    const response = getAssistantResponse(cleanQuestion);
+
+    // A short delay makes the conversation feel natural.
+    setTimeout(() => {
+
+      addMessage(response, "bot");
+
+    }, 350);
+
+  }
+
+
+  if (assistantForm) {
+
+    assistantForm.addEventListener("submit", event => {
+
+      event.preventDefault();
+
+      askAssistant(assistantQuestion.value);
+
+    });
+
+  }
+
+
+  /* =====================================
+     16. ASSISTANT SUGGESTIONS
+  ===================================== */
+
+  document.querySelectorAll("[data-question]").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+      const question = button.dataset.question;
+
+      openAssistant();
+
+      askAssistant(question);
+
+    });
+
+  });
+
+
+  /* =====================================
+     17. REVEAL CONTENT ON SCROLL
+  ===================================== */
+
+  const revealElements = document.querySelectorAll(
+    ".section-heading, .about-main, .about-highlight, .timeline-item, .project-card, .skill-card, .education-card, .contact-panel"
+  );
+
+  if ("IntersectionObserver" in window) {
+
+    const revealObserver = new IntersectionObserver(entries => {
+
+      entries.forEach(entry => {
+
+        if (entry.isIntersecting) {
+
+          entry.target.style.opacity = "1";
+          entry.target.style.transform = "translateY(0)";
+
+          revealObserver.unobserve(entry.target);
+
+        }
+
+      });
+
+    }, {
+      threshold: 0.12
+    });
+
+
+    revealElements.forEach(element => {
+
+      element.style.opacity = "0";
+      element.style.transform = "translateY(22px)";
+      element.style.transition =
+        "opacity 0.8s ease, transform 0.8s ease";
+
+      revealObserver.observe(element);
+
+    });
+
+  }
+
+
+  /* =====================================
+     18. INITIALIZE EXPERIENCE
+  ===================================== */
+
+  updateScrollEffects();
+
+  console.log("Litex experience initialized successfully.");
+
 });
+
+
+
   
