@@ -6,22 +6,44 @@
 
 /* 1. DESIGN SYSTEM */
 
+
 :root {
-  --bg: #edf5f8;
-  --bg-soft: #f5f9fb;
+  /* Primary environment */
+  --bg: #e6eef3;
+  --bg-soft: #f4f7f9;
   --white: #ffffff;
-  --ink: #192d3b;
-  --muted: #718492;
-  --blue: #6799b5;
-  --blue-dark: #315f7b;
-  --blue-light: #d9ebf3;
-  --glass: rgba(255, 255, 255, 0.58);
-  --glass-border: rgba(255, 255, 255, 0.85);
-  --shadow: 0 24px 70px rgba(65, 102, 124, 0.10);
+
+  /* Typography */
+  --ink: #142638;
+  --muted: #607587;
+
+  /* Blue palette */
+  --blue: #588ba8;
+  --blue-dark: #203f59;
+  --blue-light: #c5dce8;
+
+  /* Extended visual palette */
+  --navy: #101f32;
+  --deep-blue: #172d45;
+  --steel: #8299aa;
+  --silver: #dce5eb;
+  --ice: #edf4f8;
+  --cyan: #8ed4e4;
+  --champagne: #b9a98a;
+
+  /* Glass and depth */
+  --glass: rgba(229, 239, 246, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.88);
+
+  --shadow: 0 28px 80px rgba(24, 48, 69, 0.16);
+
   --radius: 24px;
+
+  /* Typography */
   --font-main: "DM Sans", sans-serif;
   --font-heading: "Manrope", sans-serif;
 }
+
 
 * {
   margin: 0;
